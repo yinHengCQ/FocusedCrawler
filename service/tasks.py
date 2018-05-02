@@ -19,3 +19,8 @@ def crawl_ganji_resume(list_str):
 @task
 def crawl_sohu_news():
     download_sohu_news()
+
+@task
+def crawl_all_job51():
+    os.system("cd C:/Users/admin/PycharmProjects/FocusedCrawler/service/scrapy/scrapy_crawler/scrapy_crawler && scrapy crawl job51_crawler")
+
