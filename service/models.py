@@ -17,3 +17,16 @@ class ResumeGanji(models.Model):
     work_type=models.CharField(max_length=300,null=True)
     createTime=models.DateTimeField(auto_now_add=True,null=True)
     modifyTime=models.DateTimeField(auto_now=True)
+
+class SohuNews(models.Model):
+    id=models.CharField(primary_key=True,max_length=30)
+    title=models.CharField(max_length=1024)
+    publisher=models.CharField(max_length=1024)
+    pub_date=models.CharField(max_length=1024)
+    comment_count=models.CharField(max_length=32,default='0')
+    url=models.CharField(max_length=1024)
+    createTime=models.DateTimeField(auto_now_add=True,null=True)
+    modifyTime=models.DateTimeField(auto_now=True,null=True)
+
+    def __str__(self):
+        return self.title
