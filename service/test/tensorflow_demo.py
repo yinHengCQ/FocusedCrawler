@@ -6,7 +6,7 @@ import random
 import time
 
 #验证码图片的存放路径
-CAPTCHA_IMAGE_PATH = r'C:\Users\admin\Desktop\new'
+CAPTCHA_IMAGE_PATH = 'C:/Users/admin/Desktop/new/'
 #验证码图片的宽度
 CAPTCHA_IMAGE_WIDHT = 45
 #验证码图片的高度
@@ -25,7 +25,7 @@ TRAINING_IMAGE_NAME = []
 VALIDATION_IMAGE_NAME = []
 
 # 存放训练好的模型的路径
-MODEL_SAVE_PATH = r'C:\Users\admin\Desktop\result'
+MODEL_SAVE_PATH = 'C:/Users/admin/Desktop/result/'
 
 
 def get_image_file_name(imgPath=CAPTCHA_IMAGE_PATH):
