@@ -40,3 +40,56 @@ sudo systemctl restart docker
 
 
 sudo docker run --runtime=nvidia -it -v /home/tx118/tensorflow:/home/tensorflow nvidia/tensorflow-gpu
+
+
+
+
+
+
+
+
+################################linux共享文件夹
+1安装nfs server
+
+sudo apt-get install nfs-kernel-server
+
+2建立共享文件夹
+
+mkdir -p /home/zhuyu/share
+
+3 配置nfs Server
+
+sudo vi /etc/exports
+
+
+
+/home/zhuyu/share *(rw,sync,no_root_squash,no_subtree_check)
+
+*：允许所有的网段访问，也可以使用具体的IP
+
+rw：挂接此目录的客户端对该共享目录具有读写权限
+
+sync：资料同步写入内存和硬盘
+
+no_root_squash：root用户具有对根目录的完全管理访问权限。
+
+no_subtree_check：不检查父目录的权限。
+
+4 重启服务
+
+sudo service rpcbind restart
+
+sudo service nfs-kernel-server restart
+
+5测试服务器是否可用
+
+
+
+
+showmount -e 192.168.1.177
+
+开发板----client
+
+在找到一个空目录
+
+mount 192.168.1.177:/home/zhuyu/share /home -o intr,nolock
