@@ -1,0 +1,107 @@
+#!/usr/bin/python
+#coding=utf-8
+import os
+
+os.system("tar -xzvf /root/init_package/Python-3.5.2.tgz")
+os.system("mkdir /usr/local/python")
+os.system("cp -r /root/init_package/Python-3.5.2 /usr/local/python/")
+os.system("cd /usr/local/python/Python-3.5.2 && ./configure && make && make install")
+os.system("update-alternatives --install /usr/bin/python python /usr/bin/python2 100")
+os.system("update-alternatives --install /usr/bin/python python /usr/bin/python3 150")
+
+
+os.system("unzip /root/init_package/setuptools-40.0.0.zip")
+os.system("python /root/init_package/setuptools-40.0.0/setup.py install")
+os.system("tar -zxvf /root/init_package/pip-18.0.tar.gz")
+os.system("python /root/init_package/pip-18.0/setup.py install")
+
+
+with open('/etc/apt/sources.list','w') as f:
+    f.write("""# deb cdrom:[Ubuntu 16.04 LTS _Xenial Xerus_ - Release amd64 (20160420.1)]/ xenial main restricted
+deb-src http://archive.ubuntu.com/ubuntu xenial main restricted #Added by software-properties
+deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted multiverse universe #Added by software-properties
+deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted multiverse universe #Added by software-properties
+deb http://mirrors.aliyun.com/ubuntu/ xenial universe
+deb http://mirrors.aliyun.com/ubuntu/ xenial-updates universe
+deb http://mirrors.aliyun.com/ubuntu/ xenial multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-updates multiverse
+deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse #Added by software-properties
+deb http://archive.canonical.com/ubuntu xenial partner
+deb-src http://archive.canonical.com/ubuntu xenial partner
+deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted multiverse universe #Added by software-properties
+deb http://mirrors.aliyun.com/ubuntu/ xenial-security universe
+deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial stable
+# deb-src [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial stable
+deb http://mirrors.aliyun.com/ubuntu/ xenial-security multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty main universe restricted multiverse""")
+
+
+os.system("apt-get update")
+os.system("apt -y install python3-pip")
+os.system("update-alternatives --install /usr/bin/python python /usr/bin/python2 100")
+os.system("update-alternatives --install /usr/bin/python python /usr/bin/python3 150")
+os.system("pip3 install /root/init_package/numpy-1.15.0-cp35-cp35m-manylinux1_x86_64.whl")
+os.system("pip3 install /root/init_package/tensorflow_gpu-1.5.0-cp35-cp35m-manylinux1_x86_64.whl")
+
+
+####################################################################################
+# 手工操作：
+# chmod +x cuda_9.0.176_384.81_linux.run
+# sh cuda_9.0.176_384.81_linux.run
+# chmod +x NVIDIA-Linux-x86_64-390.77.run
+# sh NVIDIA-Linux-x86_64-390.77.run
+####################################################################################
+with open('/etc/modprobe.d/blacklist-nouveau.conf','w') as f:
+    f.write("""blacklist nouveau
+options nouveau modeset=0""")
+
+os.system("update-initramfs -u")
+
+
+####################################################################################
+# 手工操作：
+# reboot
+####################################################################################
+
+
+os.system("rm /tmp/.X*")
+
+
+os.system("tar -xzvf /root/init_package/cudnn-9.0-linux-x64-v7.tgz")
+os.system("mkdir /usr/local/cuda-9.0")
+os.system("cp -r /root/init_package/cuda/include /usr/local/cuda-9.0/include")
+os.system("cp -r /root/init_package/cuda/lib64 /usr/local/cuda-9.0/lib64")
+os.system("chmod a+r /usr/local/cuda-9.0/include/cudnn.h /usr/local/cuda-9.0/lib64/libcudnn*")
+
+
+with open('/etc/bash.bashrc','a') as f:
+    append_export="""
+export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export CUDA_HOME=/usr/local/cuda-9.0
+    """
+    f.write(append_export)
+
+os.system("source /etc/bash.bashrc")
+
+
+os.system("curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/nvidia-docker.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list")
+os.system("apt-get update")
+os.system("apt-get -y install apt-transport-https ca-certificates curl software-properties-common")
+os.system("curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -")
+os.system("add-apt-repository \"deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable\"")
+os.system("apt-get -y update")
+os.system("apt-get -y install docker-ce")
+os.system("curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+  sudo apt-key add -")
+os.system("distribution=$(. /etc/os-release;echo $ID$VERSION_ID)")
+os.system("curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list| \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list")
+os.system("apt-get update")
+os.system("apt-get install -y nvidia-docker2")
+os.system("pkill -SIGHUP dockerd")
