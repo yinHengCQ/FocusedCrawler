@@ -93,3 +93,16 @@ showmount -e 192.168.1.177
 在找到一个空目录
 
 mount 192.168.1.177:/home/zhuyu/share /home -o intr,nolock
+
+
+#######################################部署linux，systemctl后台运行
+[Unit]
+Description=tornado_expression
+
+[Service]
+ExecStart=/usr/bin/python3 /home/server/expression_server/server_deploy.py
+WorkingDirectory=/home/server/expression_server/
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
