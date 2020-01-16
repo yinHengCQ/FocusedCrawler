@@ -1,0 +1,21 @@
+import tensorflow as tf
+
+
+saver = tf.train.import_meta_graph('./model/model.ckpt-1734049.meta',clear_devices=True)
+variables_to_resotre=[]
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('./model/'))
+    variables = tf.contrib.framework.get_variables_to_restore()
+    for i in variables:
+        if i.name.__contains__('Momentum'):
+            pass
+        else:
+            print(i.name)
+            variables_to_resotre.append(i)
+
+    saver1 = tf.train.Saver(variables_to_resotre)
+    with tf.Session() as sess1:
+        saver1.restore(sess1,tf.train.latest_checkpoint('./model/'))
+        saver1.save(sess1,'./model_new/')
+
+
